@@ -15,7 +15,11 @@ type Post struct {
 	ID        primitive.ObjectID `json:"_id" bson:"_id" validate:"required"`
 	CreatedAt time.Time          `json:"createdAt" bson:"created_at" validate:"required"`
 	UpdatedAt time.Time          `json:"updatedAt" bson:"updated_at" validate:"required"`
-	Title     string             `json:"title" bson:"title" validate:"required,min=12"`
+	Text      string             `json:"text" bson:"text" validate:"required,min=12"`
+	URL       string             `json:"url" bson:"url"`
+	Hashtags  string             `json:"hashtags" bson:"hashtags"`
+	Via       string             `json:"via" bson:"via"`
+	Related   string             `json:"related" bson:"related"`
 }
 
 type ErrorResponse struct {

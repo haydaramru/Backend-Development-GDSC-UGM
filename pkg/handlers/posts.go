@@ -76,7 +76,7 @@ func CreatePost(c *fiber.Ctx) error {
 	return c.JSON(post)
 }
 
-func GetAllPost(c *fiber.Ctx) error {
+func GetAllPosts(c *fiber.Ctx) error {
 	client, err := db.GetMongoClient()
 
 	var posts []*Post
@@ -104,4 +104,96 @@ func GetAllPost(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(posts)
+}
+
+func GetSinglePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	client, err := db.GetMongoClient()
+	if err != nil {
+		return err
+	}
+
+	collection := client.Database(db.Database).Collection(string(db.PostsCollection))
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": objectID}
+
+	result := collection.FindOne(context.TODO(), filter)
+	if result.Err() != nil {
+		return result.Err()
+	}
+
+	var post Post
+	err = result.Decode(&post)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(post)
+}
+
+func UpdatePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	client, err := db.GetMongoClient()
+	if err != nil {
+		return err
+	}
+
+	collection := client.Database(db.Database).Collection(string(db.PostsCollection))
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": objectID}
+
+	var updatedPost bson.M
+	if err := c.BodyParser(&updatedPost); err != nil {
+		return err
+	}
+
+	updatedPost["updated_at"] = time.Now()
+
+	update := bson.D{
+		{Key: "$set", Value: updatedPost},
+	}
+
+	_, err = collection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(updatedPost)
+}
+
+func DeletePost(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	client, err := db.GetMongoClient()
+	if err != nil {
+		return err
+	}
+
+	collection := client.Database(db.Database).Collection(string(db.PostsCollection))
+
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": objectID}
+
+	_, err = collection.DeleteOne(context.TODO(), filter)
+	if err != nil {
+		return err
+	}
+
+	return c.SendStatus(fiber.StatusNoContent)
 }

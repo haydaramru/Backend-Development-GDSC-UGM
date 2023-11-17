@@ -23,7 +23,9 @@ func main() {
 	app.Get("/", healthcheck)
 
 	app.Post("/v1/posts", handlers.CreatePost)
-	app.Get("/v1/posts", handlers.GetAllPost)
+	app.Get("/v1/posts", handlers.GetAllPosts)
+	app.Patch("/v1/posts", handlers.UpdatePost)
+	app.Delete("/v1/posts", handlers.DeletePost)
 
 	log.Fatal(app.Listen(":7070"))
 }

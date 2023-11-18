@@ -15,7 +15,7 @@ type Post struct {
 	ID        primitive.ObjectID `json:"_id" bson:"_id" validate:"required"`
 	CreatedAt time.Time          `json:"createdAt" bson:"created_at" validate:"required"`
 	UpdatedAt time.Time          `json:"updatedAt" bson:"updated_at" validate:"required"`
-	Text      string             `json:"text" bson:"text" validate:"required,min=12"`
+	Text      string             `json:"text" bson:"text" validate:"required"`
 	URL       string             `json:"url" bson:"url"`
 	Hashtags  string             `json:"hashtags" bson:"hashtags"`
 	Via       string             `json:"via" bson:"via"`
